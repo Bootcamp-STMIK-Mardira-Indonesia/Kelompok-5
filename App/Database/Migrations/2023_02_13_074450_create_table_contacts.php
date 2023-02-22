@@ -14,7 +14,7 @@ return new class extends Migration
             $table->increment('id');
             $table->string('alamat', 200);
             $table->string('no_telp', 20);
-            $table->string('whatsaap', 20);
+            $table->string('whatsapp', 20);
             $table->string('sosial_media', 50);
             $table->timestamps();
         });
