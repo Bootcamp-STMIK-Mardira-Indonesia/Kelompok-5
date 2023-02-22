@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\QueryBuilder as DB;
-
+use App\Core\Validator;
 
 
 class BankAccountController extends Controller
@@ -42,6 +42,29 @@ class BankAccountController extends Controller
         $name = $this->input->post('name');
         $id_bank = $this->input->post('id_bank');
         $atas_nama = $this->input->post('atas_nama');
+        $validator = Validator::validate([
+            'name' => [
+                'required' => true,
+            ],
+            'id_bank' => [
+                'required' => true,
+            ],
+            'atas_nama' => [
+                'required' => true,
+            ],
+        ], [
+            'name' => $name,
+            'id_bank' => $id_bank,
+            'atas_nama' => $atas_nama
+        ]);
+
+        if ($validator->fails()) {
+            $this->response(400, [
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'data' => $validator->errors(),
+            ]);
+        }  
 
         DB::table('bank_accounts')->insert([
             'name' => $name,

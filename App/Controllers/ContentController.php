@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\QueryBuilder as DB;
+use App\Core\Validator;
 
 class ContentController extends Controller
 {
@@ -39,6 +40,24 @@ class ContentController extends Controller
     {
         $judul = $this->input->post('judul');
         $konten = $this->input->post('konten');
+        $validator = Validator::validate([
+            'judul' => [
+                'required' => true,
+            ],
+            'konten' => [
+                'required' => true,
+            ],
+        ], [
+            'judul' => $judul,
+            'konten' => $konten,
+        ]);
+
+        if ($validator->fails()) {
+            $this->response(400, [
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ]);
+        }
 
         DB::table('contents')->insert([
             'judul' => $judul,

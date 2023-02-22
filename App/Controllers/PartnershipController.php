@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\QueryBuilder as DB;
+use App\Core\Validator;
 
 class PartnershipController extends Controller
 {
@@ -39,6 +40,23 @@ class PartnershipController extends Controller
     {
         $name = $this->input->post('name');
         $alamat = $this->input->post('alamat');
+        $validator = Validator::validate([
+            'name' => [
+                'required' => true,
+            ],
+            'alamat' => [
+                'required' => true,
+            ],
+        ], [
+            'name' => $name,
+            'alamat' => $alamat,
+        ]);
+        if ($validator->fails()) {
+            $this->response(400, [
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ]);
+        }
 
         DB::table('partnerships')->insert([
             'name' => $name,

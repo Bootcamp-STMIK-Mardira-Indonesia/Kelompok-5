@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\QueryBuilder as DB;
+use App\Core\Validator;
 
 class ContactController extends Controller
 {
@@ -39,13 +40,39 @@ class ContactController extends Controller
     {
         $alamat = $this->input->post('alamat');
         $no_telp = $this->input->post('no_telp');
-        $whatsaap = $this->input->post('whatsaap');
+        $whatsapp = $this->input->post('whatsapp');
         $sosial_media = $this->input->post('sosial_media');
+        $validator = Validator::validate([
+            'alamat' => [
+                'required' => true,
+            ],
+            'no_telp' => [
+                'required' => true,
+            ],
+            'whatsapp' => [
+                'required' => true,
+            ],
+            'sosial_media' => [
+                'required' => true,
+            ],
+        ], [
+            'alamat' => $alamat,
+            'no_telp' => $no_telp,
+            'whatsapp' => $whatsapp,
+            'sosial_media' => $sosial_media
+        ]);
+
+        if ($validator->fails()) {
+            $this->response(400, [
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ]);
+        }
 
         DB::table('contacts')->insert([
             'alamat' => $alamat,
             'no_telp' => $no_telp,
-            'whatsaap' => $whatsaap,
+            'whatsapp' => $whatsapp,
             'sosial_media' => $sosial_media
         ]);
         $contact = DB::table('contacts')->where('alamat', $alamat)->orderBy('id', 'DESC')->first();
@@ -65,7 +92,7 @@ class ContactController extends Controller
     {
         $alamat = $this->input->post('alamat');
         $no_telp = $this->input->post('no_telp');
-        $whatsaap = $this->input->post('whatsaap');
+        $whatsapp = $this->input->post('whatsapp');
         $sosial_media = $this->input->post('sosial_media');
 
         $contact = DB::table('contacts')->where('id', $id)->first();
@@ -74,7 +101,7 @@ class ContactController extends Controller
             DB::table('contacts')->where('id', $id)->update([
                 'alamat' => $alamat,
                 'no_telp' => $no_telp,
-                'whatsaap' => $whatsaap,
+                'whatsapp' => $whatsapp,
                 'sosial_media' => $sosial_media
             ]);
             $this->response(200, [
